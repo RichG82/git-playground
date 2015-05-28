@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" ng-app="angularScratchTest">
+
+<head>
+    <meta charset="utf-8">
+    <title>Angular Scratch Template</title>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+    <link href="FlexSlider-master/flexslider.css" rel="stylesheet">
+    <script src="FlexSlider-master/jquery.flexslider.js"></script>
+    <script>
+        var tmp = null;
+        var app = angular.module('angularScratchTest', ['ngRoute']);
+
+        app.controller('ctrl', ['$scope', '$http', function ($scope, $http) {
+            $scope.Name = "Testing";
+            $scope.init = function () {
+                $(window).load(function () {
+                    $('.flexslider').flexslider({
+                        animation: "slide",
+                        animationLoop: false,
+                        itemMargin: 0
+                    });
+                });
+            };
+
+            $http.jsonp('https://api.flickr.com/services/feeds/photos_public.gne?tags=painting&format=json&jsoncallback=JSON_CALLBACK').success(function (data) {
+                $scope.pics = data.items;
+
+
+            });
+        }]);
+        
+        app.config(function($routeProvider){
+           $routeProvider.when({
+               path:'/foo',
+               route: {
+                   controller: 'ctrl',
+                   template:'<h1>hi</h1>'
+               }
+           });
+        });
+
+        angular.module('angularScratchTest').directive('myDirective', function () {
+            return {
+                template:'<h1>this is a template</h1>',
+                link: function ($scope, element, attrs) {
+
+                    element.bind('click', function () {
+                        element.html('You clicked me!');
+                    });
+                    element.bind('mouseenter', function () {
+                        element.css('background-color', 'yellow');
+                    });
+                    element.bind('mouseleave', function () {
+                        element.css('background-color', 'white');
+                    });
+                    
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .flexslider {
+            width: 500px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div ng-controller="ctrl" data-ng-init="init()">
+        <div my-directive>Hello</div>
+
+        <div class="flexslider">
+            <ul class="slides">
+                <li ng-repeat="x in pics"><img src="{{x.media.m}}" width="500" height="300">
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
